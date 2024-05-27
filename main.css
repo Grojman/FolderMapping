@@ -1,0 +1,125 @@
+#drop-area {
+    border: 2px dashed #cccccc;
+    border-radius: 20px;
+    width: 100%;
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 20px;
+    text-align: center;
+    font-family: Arial, sans-serif;
+    color: #cccccc;
+    max-height: 10vh;
+}
+#drop-area.highlight {
+    border-color: purple;
+}
+
+#folder-structure {
+    width: fit-content;
+    display: flex;
+    justify-content: space-between;
+}
+
+.cell {
+    display: flex;
+    flex-direction: row;
+    width:10vw;
+    height: 5vh;
+}
+
+.column {
+    display: flex;
+    flex-direction: column;
+    width: fit-content;
+    margin-left: 1vw;
+}
+
+img {
+    width: 3vw;
+    vertical-align:middle;
+    margin-right: 5%;
+}
+
+#relations {
+    top:0;
+    left:0;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+#folder-structure {
+    position: relative;
+}
+
+.linea {
+    stroke: black;
+    stroke-width: 2;
+}
+.cell > p {
+    text-align: justify;
+    text-wrap: wrap;
+}
+
+#main-content {
+    position: relative;
+    display: none;
+
+    background: linear-gradient(135deg, #f5ebeb, #cfc3c3);
+    box-shadow: 0 4px 8px rgba(247, 239, 239, 0.377);
+    border-radius: 10px;
+    padding:  1vw 3vw 3vw 0;
+}
+#options {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    height: 40vh;
+}
+
+.text-label {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 8px;
+    color: #555;
+} 
+
+#interactive-area {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-radius: 10px;
+    width: fit-content;
+    padding: 0 5vw 5vw;
+    background: linear-gradient(135deg, #242121, #312d2d);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    min-width: 90vw;
+    background: linear-gradient(135deg, #504a4a, #383636);
+    padding: 0;
+    margin: 0;
+}
+
+form > h2 {
+    text-align: center;
+    color: #333;
+}
+
+input[type="text"],
+input[type="email"],
+textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: #fff;
+    font-size: 16px;
+}

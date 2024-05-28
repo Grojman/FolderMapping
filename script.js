@@ -18,8 +18,6 @@ let allowedFiles = []
 
 const imagesFolder = "file_images"
 
-const lineMargin = 10
-
 document.addEventListener('DOMContentLoaded', () => {
     dropArea = document.getElementById('drop-area')
     columnsContainer = document.querySelector("#folder-structure")
@@ -84,7 +82,7 @@ function unhighlight(e) {
 
 function handleDrop(e) {
     document.querySelector("#interactive-area").style.display = 'none'
-    document.querySelector("#main-content").style.display = 'block'
+    document.querySelector("#final-result").style.display = 'block'
 
     const files = e.dataTransfer.items;
 
@@ -110,10 +108,9 @@ async function traverseFileTree(item, path, depth, parent, first, last) {
     depth = depth || 0;
     path = path || "";
 
-    console.log(item)
     let visualElement = createCell(item.name, item.isDirectory);
 
-    if ((folderOnly && item.isDirectory) || (allowedFiles.length > 0 && allowedFiles.includes(getExtension(item.name))) || (!forbiddenFiles.includes(getExtension(item.name)))) {
+    if ((folderOnly && item.isDirectory) || !folderOnly && ((allowedFiles.length > 0 && allowedFiles.includes(getExtension(item.name))) || (!forbiddenFiles.includes(getExtension(item.name))))) {
         addCell(visualElement, depth, parent === undefined ? -1 : [...getColumn(depth -1).children].indexOf(parent));
 
         if (parent !== undefined) {
@@ -273,7 +270,7 @@ function drawLine(l1, l2, first) {
     console.log(newLine.lineWidth)
     newLine.setAttribute('x1', start.x);
     newLine.setAttribute('y1', end.y );
-    newLine.setAttribute('x2', end.x - lineMargin);
+    newLine.setAttribute('x2', end.x);
     newLine.setAttribute('y2', end.y);
     
     newLine.classList.add("linea")

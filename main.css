@@ -1,12 +1,12 @@
 #drop-area {
-    border: 2px dashed #cccccc;
+    border: 4px dashed #cccccc;
     border-radius: 20px;
     width: 100%;
-    max-width: 600px;
-    margin: 50px auto;
-    padding: 20px;
+    align-self: center;
+    padding: 2vw;
     text-align: center;
-    font-family: Arial, sans-serif;
+    font-family:'Courier New', Courier, monospace;
+    font-size: 25pt;
     color: #cccccc;
     max-height: 10vh;
 }
@@ -24,14 +24,16 @@
     display: flex;
     flex-direction: row;
     width:10vw;
+    max-width:10vw;
     height: 5vh;
+    padding: 1vw;
 }
 
 .column {
     display: flex;
     flex-direction: column;
     width: fit-content;
-    margin-left: 1vw;
+    margin-left: 0.5vw;
 }
 
 img {
@@ -56,18 +58,33 @@ img {
     stroke-width: 2;
 }
 .cell > p {
+    align-self: center;
     text-align: justify;
     text-wrap: wrap;
+    padding-right: 0.5vw;
+
+}
+
+#final-result {
+    display: none;
+}
+
+h1, h2 {
+    align-self: center;
+    color:  #f5ebeb;
+    font-family:'Courier New', Courier, monospace;
+    letter-spacing: 0.2em;
+    font-size: 30pt;
 }
 
 #main-content {
     position: relative;
-    display: none;
 
     background: linear-gradient(135deg, #f5ebeb, #cfc3c3);
     box-shadow: 0 4px 8px rgba(247, 239, 239, 0.377);
     border-radius: 10px;
     padding:  1vw 3vw 3vw 0;
+    margin: 1vw 0;
 }
 #options {
     display: flex;
@@ -75,16 +92,35 @@ img {
     align-items: center;
     justify-content: space-around;
     height: 40vh;
+    padding-bottom: 5vh;
+}
+
+#options label {
+    margin-bottom: 2vh;
+    font-family: 'Courier New', Courier, monospace;
+    color: #e1e1e1;
+}
+
+fieldset {
+    display: flex;
+    flex-direction: column;
+    border: none;
 }
 
 .text-label {
     display: flex;
     flex-direction: column;
-    margin-bottom: 8px;
-    color: #555;
-} 
+    margin-bottom: 2%;
+    color: #d3c2c2;
+}
+
+.text-label > input {
+    margin-top: 1vh;
+}
+
 
 #interactive-area {
+    margin-top: 5vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -107,11 +143,6 @@ body {
     margin: 0;
 }
 
-form > h2 {
-    text-align: center;
-    color: #333;
-}
-
 input[type="text"],
 input[type="email"],
 textarea {
@@ -122,4 +153,24 @@ textarea {
     border-radius: 4px;
     background: #fff;
     font-size: 16px;
+}
+
+#final-interface {
+    margin: 1vw;
+    display: flex;
+    justify-content: space-around;
+    
+    align-self: center;
+}
+
+button {
+    font-size: 20pt;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #d5bebe, #c3c2c2);
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    transition: transform  0.5s;
+}
+
+button:hover {
+    transform: scale(1.1)
 }

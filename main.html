@@ -16,17 +16,20 @@
         </div>
         
         <form id="options">
-            <h2>Configuracion</h2>
+            <h2>Configuración</h2>
             
-
-            <label>
+            <fieldset>
+                <label>
                 <input type="checkbox" id="show-names" />
-                No mostrar los nombres de las carpetas
-            </label>
-            <label>
-                <input type="checkbox" id="folder-only" />
-                Mostrar solo los directorios
-            </label>
+                    No mostrar los nombres de las carpetas
+                </label>
+                <label>
+                    <input type="checkbox" id="folder-only" />
+                    Mostrar solo los directorios
+                </label>
+            </fieldset>
+
+            
             <label class="text-label">
                 Archivos permitidos (escribe las extensiones separadas por comas):
                 <input type="text" id="allowed-files" placeholder="e. g. (cs, txt, csv...)"/>
@@ -38,18 +41,24 @@
         </form>
     </div>
 
-    
+    <div id="final-result">
 
-    <div id="main-content">
-        <div id="folder-structure">
-            
+        <div id="final-interface">
+            <button id="download-button" download="">Descargar</button>
+            <button id="regenerate-button">Generar otro mapa</button>
         </div>
+
         
-        <svg id="relations" xmlns="http://www.w3.org/2000/svg">
-        </svg>
+
+        <div id="main-content">
+            <div id="folder-structure">
+                
+            </div>
+            
+            <svg id="relations" xmlns="http://www.w3.org/2000/svg">
+            </svg>
+        </div>
     </div>
-    
-    
           
 
     <script src="script.js"></script>

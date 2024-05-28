@@ -79,7 +79,6 @@ h1, h2 {
 
 #main-content {
     position: relative;
-
     background: linear-gradient(135deg, #f5ebeb, #cfc3c3);
     box-shadow: 0 4px 8px rgba(247, 239, 239, 0.377);
     border-radius: 10px;

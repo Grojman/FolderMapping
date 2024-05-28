@@ -12,39 +12,11 @@ let folderOnly
 
 let dontShowNames
 
-let forbiddenFiles = []
-
-let allowedFiles = []
-
-let scaleY
-
-let scaleX
-
-let y, x
-
 const imagesFolder = "file_images"
 
-window.addEventListener('resize', () => {
-    scaleX = window.outerWidth / x;
-    scaleY = window.outerHeight / y;
-    
-    [...folderRelations.children].forEach(linea => {
-
-
-        linea.setAttribute('x1', (linea.x1.baseVal.value) * scaleX)
-        linea.setAttribute('x2', (linea.x2.baseVal.value) * scaleX)
-        linea.setAttribute('y1', (linea.y1.baseVal.value) * scaleY)
-        linea.setAttribute('y2', (linea.y2.baseVal.value) * scaleY)
-
-    });
-
-    x = window.outerWidth
-    y = window.outerHeight
-})
+const lineMargin = 10
 
 document.addEventListener('DOMContentLoaded', () => {
-    x = window.outerWidth
-    y = window.outerHeight
     dropArea = document.getElementById('drop-area')
     columnsContainer = document.querySelector("#folder-structure")
     columns = []
@@ -58,9 +30,6 @@ document.addEventListener('DOMContentLoaded', () => {
         folderOnly = e.currentTarget.checked
     })
 
-    document.querySelector("#regenerate-button").addEventListener('click', regenerateHtml)
-    document.querySelector("#download-button").addEventListener('click', downloadPicture)
-
     let events = {
         "dragenter" : dragenter,
         "dragover" : dragover,
@@ -73,44 +42,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   
 });
-
-function regenerateHtml() {
-    document.querySelector("#interactive-area").style.display = 'block'
-    document.querySelector("#final-result").style.display = 'none'
-    while(folderRelations.firstChild) {
-        folderRelations.removeChild(folderRelations.lastChild)
-    }
-
-    while(columnsContainer.firstChild) {
-        columnsContainer.removeChild(columnsContainer.lastChild)
-    }
-    columns = []
-}
-
-function downloadPicture() {
-    const captureArea = document.getElementById('main-content');
-    const originalBoxShadow = captureArea.style.boxShadow;
-    const originalBorderRadius = captureArea.style.borderRadius;
-    captureArea.style.boxShadow = 'none';
-    captureArea.style.borderRadius = 0;
-    html2canvas(captureArea).then(canvas => {
-        const imgData = canvas.toDataURL('image/png');
-        download(imgData)
-        captureArea.style.boxShadow = originalBoxShadow;
-        captureArea.style.borderRadius = originalBorderRadius;
-    });
-
-};
-
-function download(url) {
-    const a = document.createElement('a')
-    a.href = url
-    a.download = 'mapped_file_tree.png'
-    document.body.appendChild(a)
-    a.click()
-    document.body.removeChild(a)
-  }
-
 
 function dragenter(e) {
     preventDefaults(e)
@@ -148,18 +79,10 @@ function unhighlight(e) {
 }
 
 function handleDrop(e) {
-    document.querySelector("#interactive-area").style.display = 'none'
-    document.querySelector("#final-result").style.display = 'block'
+    dropArea.style.display = 'none'
+    document.querySelector("#options").style.display = 'none'
 
     const files = e.dataTransfer.items;
-
-    if  (document.querySelector("#allowed-files").value) {
-        allowedFiles = document.querySelector("#allowed-files").value.replace(/\s/g,'').value.split(',')
-    }
-    if  (document.querySelector("#forbidden-files").value) {
-        forbiddenFiles = document.querySelector("#forbidden-files").value.replace(/\s/g,'').value.split(',')
-    }
-
 
     handleFiles(files);
 }
@@ -172,12 +95,13 @@ function handleFiles(files) {
 }
 
 async function traverseFileTree(item, path, depth, parent, first, last) {
+
     depth = depth || 0;
     path = path || "";
 
-    let visualElement = createCell(item.name, item.isDirectory);
+    let visualElement = createCell(item.name);
 
-    if ((folderOnly && item.isDirectory) || !folderOnly && ((allowedFiles.length > 0 && allowedFiles.includes(getExtension(item.name))) || (!forbiddenFiles.includes(getExtension(item.name))))) {
+    if (!folderOnly || item.isDirectory) {
         addCell(visualElement, depth, parent === undefined ? -1 : [...getColumn(depth -1).children].indexOf(parent));
 
         if (parent !== undefined) {
@@ -207,9 +131,7 @@ async function traverseFileTree(item, path, depth, parent, first, last) {
     }
 }
 
-function getExtension(name) {
-    return name.split(".").slice(-1)
-}
+
 
 function addCell(cell, depth, parentPosition) {
     let column = getColumn(depth)
@@ -217,9 +139,9 @@ function addCell(cell, depth, parentPosition) {
 
     let columnPosition = columns.indexOf(column)
 
-    for (let index = column.children.length; index < parentPosition; index++) {
-        column.appendChild(createEmtpyCell())
-    }
+        for (let index = column.children.length; index < parentPosition; index++) {
+            column.appendChild(createEmtpyCell())
+        }
 
     column.appendChild(cell)
 
@@ -249,11 +171,11 @@ function createEmtpyCell() {
     return cell
 }
 
-function createCell(name, folder) {
+function createCell(name) {
     name = name || ""
     let cell = createEmtpyCell()
 
-    addImageToCell(cell, name, folder)
+    addImageToCell(cell, name)
 
     if (!dontShowNames) {
         addTextToCell(cell, name)
@@ -262,9 +184,9 @@ function createCell(name, folder) {
     return cell
 }
 
-function addImageToCell(cell, name, folder) {
+function addImageToCell(cell, name) {
     let icon = document.createElement("img")
-    icon.src = getFileIcon(getExtension(name), folder)
+    icon.src = getFileIcon(name.split("."))
     cell.appendChild(icon)
 }
 
@@ -275,16 +197,12 @@ function addTextToCell(cell, name) {
 }
 
 
-function getFileIcon(extension, folder) {
-    if (!extension || folder) {
-        return "folder.png"
-    }
-    let path = `${imagesFolder}/${extension}.png`
-    return fileExists(path) ? path : `${imagesFolder}/unknown.png`
+function getFileIcon(extension) {
+    return new File(`${imagesFolder}/${extension}.png`) ? "" : ""
 }
 
 function getMiddleLeft(element) {
-    const rect = getRelativeBoundingClientRect(element)
+    const rect = element.getBoundingClientRect();
     return {
         x: rect.left,
         y: rect.y + (rect.height / 2)
@@ -292,7 +210,7 @@ function getMiddleLeft(element) {
 }
 
 function getMiddleRight(element) {
-    const rect = getRelativeBoundingClientRect(element)
+    const rect = element.getBoundingClientRect();
     return {
         x: rect.left + rect.width,
         y: rect.y + (rect.height / 2)
@@ -300,42 +218,21 @@ function getMiddleRight(element) {
 }
 
 function getMiddleRightText(element) {
-    const rect = getRelativeBoundingClientRect(element.lastChild);
+    const rect = element.lastChild.getBoundingClientRect();
     return {
         x: rect.left + rect.width,
         y: rect.y + (rect.height / 2)
     };
 }
 
-function getRelativeBoundingClientRect(element) {
-    const parentPos = document.querySelector("#relations").getBoundingClientRect();
-    const childPos = element.getBoundingClientRect();
-
-    const reslativePos = {
-        top: childPos.top - parentPos.top,
-        right: childPos.right - parentPos.right,
-        bottom: childPos.bottom - parentPos.bottom,
-        left: childPos.left - parentPos.left,
-        x: childPos.left - parentPos.left,
-        y: childPos.top - parentPos.top,
-        width: childPos.width,
-        height: childPos.height,
-    };
-
-    return reslativePos
-}
-
-
-
 function drawLine(l1, l2, first) {
     const start = first ? getMiddleRightText(l1) : getMiddleRight(l1);
     const end = getMiddleLeft(l2);
 
     var newLine = document.createElementNS('http://www.w3.org/2000/svg','line');
-
     newLine.setAttribute('x1', start.x);
-    newLine.setAttribute('y1', end.y );
-    newLine.setAttribute('x2', end.x);
+    newLine.setAttribute('y1', end.y);
+    newLine.setAttribute('x2', end.x - lineMargin);
     newLine.setAttribute('y2', end.y);
     
     newLine.classList.add("linea")
@@ -358,14 +255,7 @@ function drawLongLine(parent, lastOne) {
     folderRelations.appendChild(newLine)
 }
 
-async function fileExists(fileUrl) {
-    try {
-        const response = await fetch(fileUrl, { method: 'HEAD' });
-        return response.ok
-    } catch (error) {
-        return false
-    }
-}
+
   /*
   
   USAR ESTO PARA MEJORAR: (EL CODIGO DE ARRIBA NO PERMITE MAS DE 100 ENTRADAS)

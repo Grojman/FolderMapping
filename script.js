@@ -16,6 +16,8 @@ let forbiddenFiles = []
 
 let allowedFiles = []
 
+let forbiddenFolders = []
+
 let scaleY
 
 let scaleX
@@ -162,18 +164,29 @@ function unhighlight(e) {
 
 function handleDrop(e) {
     document.querySelector("#interactive-area").style.display = 'none'
-    document.querySelector("#final-result").style.display = 'block'
+    document.querySelector("#final-result").style.display = 'grid'
 
     const files = e.dataTransfer.items;
 
-    if  (document.querySelector("#allowed-files").value) {
-        allowedFiles = document.querySelector("#allowed-files").value.replace(/\s/g,'').value.split(',')
-    }
-    if  (document.querySelector("#forbidden-files").value) {
-        forbiddenFiles = document.querySelector("#forbidden-files").value.replace(/\s/g,'').value.split(',')
+    let allowedFilesValue = document.querySelector("#allowed-files").value.replace(/\s/g,'')
+    let forbiddenFilesValue = document.querySelector("#forbidden-files").value.replace(/\s/g,'')
+    let forbiddenFoldersValue = document.querySelector("#forbidden-folders").value.replace(/\s/g,'')
+
+    if  (allowedFilesValue) {
+        allowedFiles = allowedFilesValue.split(allowedFilesValue.includes(',') ? ',' : undefined)
     }
 
+    if  (forbiddenFilesValue) {
+        forbiddenFiles = forbiddenFilesValue.split(forbiddenFilesValue.includes(',') ? ',' : undefined)
+    }
+    
+    if  (forbiddenFoldersValue) {
+        forbiddenFolders = forbiddenFoldersValue.split(forbiddenFoldersValue.includes(',') ? ',' : undefined)
+    }
 
+    console.log(allowedFiles)
+    console.log(forbiddenFiles)
+    console.log(forbiddenFolders)
     handleFiles(files);
 }
 
@@ -209,10 +222,7 @@ async function traverseFileTree(item, path, depth, parent, first, last) {
         try {
             let entries = await readEntriesPromise;
 
-            entries = entries.filter(file => folderOnly ? file.isDirectory :
-                                                          !forbiddenFiles.includes(getExtension(item.name) &&
-                                                          (allowedFiles.length == 0 || allowedFiles.includes(getExtension(item.name))))
-            )
+            entries = entries.filter(validate)
 
             for (const entry of entries) {
                 let position = entries.indexOf(entry)
@@ -224,15 +234,26 @@ async function traverseFileTree(item, path, depth, parent, first, last) {
     }
 }
 
+function validate(file) {
+    if (file.isDirectory) {
+        return !forbiddenFolders.includes(file.name)
+    } else {
+        return !folderOnly && 
+               !forbiddenFiles.includes(getExtension(file.name)) && 
+               (allowedFiles.length === 0 || allowedFiles.includes(getExtension(file.name)))
+    }
+}
+
+
 function getExtension(name) {
-    return name.split(".").slice(-1)
+    return name.split(".").slice(-1)[0]
 }
 
 function addCell(cell, depth, parentPosition) {
     let column = getColumn(depth)
 
     let columnPosition = columns.indexOf(column)
-
+    
     for (let index = column.children.length; index < parentPosition; index++) {
         column.appendChild(createEmtpyCell())
     }

@@ -16,19 +16,16 @@
         </div>
         
         <form id="options">
-            <h2>Configuración</h2>
-            
             <fieldset>
                 <label>
                 <input type="checkbox" id="show-names" />
-                    No mostrar los nombres de las carpetas
+                    No mostrar los nombres de los elementos
                 </label>
                 <label>
                     <input type="checkbox" id="folder-only" />
                     Mostrar solo los directorios
                 </label>
             </fieldset>
-
             
             <label class="text-label">
                 Archivos permitidos (escribe las extensiones separadas por comas):
@@ -43,10 +40,25 @@
 
     <div id="final-result">
 
-        <div id="final-interface">
-            <button id="download-button" download="">Descargar</button>
-            <button id="regenerate-button">Generar otro mapa</button>
-        </div>
+        <form id="final-interface">
+            <button type="button" id="download-button" download="">Descargar</button>
+            <button type="button" id="regenerate-button">Generar otro mapa</button>
+            
+            <label>
+                Color del fondo:
+                <input id="background-color" type="color" value="#cfc3c3"/>
+            </label>
+
+            <label>
+                Color de las lineas:
+                <input id="lines-color" type="color" value="#FFFFFF"/>
+            </label>
+
+            <label>
+                Color del texto:
+                <input id="text-color" type="color" value="#FFFFFF"/>
+            </label>
+        </form>
 
         
 

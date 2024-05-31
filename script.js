@@ -50,6 +50,19 @@ document.addEventListener('DOMContentLoaded', () => {
     columns = []
     folderRelations = document.getElementById('relations')
 
+    
+    document.querySelector("#background-color").addEventListener('input', (e) => {
+        document.querySelector("#main-content").style.background = e.target.value
+    })
+
+    document.querySelector("#lines-color").addEventListener('input', (e) => {
+        document.querySelector("#relations").style.stroke = e.target.value
+    })
+
+    document.querySelector("#text-color").addEventListener('input', (e) => {
+        document.querySelector("#main-content").style.color = e.target.value
+    })
+
     document.querySelector("#show-names").addEventListener('change', (e) => {
         dontShowNames = e.currentTarget.checked
     })
@@ -58,8 +71,8 @@ document.addEventListener('DOMContentLoaded', () => {
         folderOnly = e.currentTarget.checked
     })
 
-    document.querySelector("#regenerate-button").addEventListener('click', regenerateHtml)
-    document.querySelector("#download-button").addEventListener('click', downloadPicture)
+    document.querySelector("#regenerate-button").addEventListener('click', regenerateHtml, false)
+    document.querySelector("#download-button").addEventListener('click', downloadPicture, false)
 
     let events = {
         "dragenter" : dragenter,
@@ -177,16 +190,14 @@ async function traverseFileTree(item, path, depth, parent, first, last) {
 
     let visualElement = createCell(item.name, item.isDirectory);
 
-    if ((folderOnly && item.isDirectory) || !folderOnly && ((allowedFiles.length > 0 && allowedFiles.includes(getExtension(item.name))) || (!forbiddenFiles.includes(getExtension(item.name))))) {
-        addCell(visualElement, depth, parent === undefined ? -1 : [...getColumn(depth -1).children].indexOf(parent));
+    addCell(visualElement, depth, parent === undefined ? -1 : [...getColumn(depth -1).children].indexOf(parent));
 
-        if (parent !== undefined) {
-            drawLine(parent, visualElement, first);
-        }
+    if (parent !== undefined) {
+        drawLine(parent, visualElement, first);
+    }
 
-        if (last) {
-            drawLongLine(parent, visualElement)
-        }
+    if (last) {
+        drawLongLine(parent, visualElement)
     }
 
     if (item.isDirectory) {
@@ -196,7 +207,13 @@ async function traverseFileTree(item, path, depth, parent, first, last) {
         });
 
         try {
-            const entries = await readEntriesPromise;
+            let entries = await readEntriesPromise;
+
+            entries = entries.filter(file => folderOnly ? file.isDirectory :
+                                                          !forbiddenFiles.includes(getExtension(item.name) &&
+                                                          (allowedFiles.length == 0 || allowedFiles.includes(getExtension(item.name))))
+            )
+
             for (const entry of entries) {
                 let position = entries.indexOf(entry)
                 await traverseFileTree(entry, path + item.name + "/", depth + 1, visualElement, position == 0, position == entries.length -1);
@@ -213,7 +230,6 @@ function getExtension(name) {
 
 function addCell(cell, depth, parentPosition) {
     let column = getColumn(depth)
-
 
     let columnPosition = columns.indexOf(column)
 
@@ -271,9 +287,9 @@ function addImageToCell(cell, name, folder) {
 function addTextToCell(cell, name) {
     let cellName = document.createElement("p")
     cellName.textContent = name
+    cellName.classList.add("cell-text")
     cell.appendChild(cellName)
 }
-
 
 function getFileIcon(extension, folder) {
     if (!extension || folder) {
@@ -358,13 +374,13 @@ function drawLongLine(parent, lastOne) {
     folderRelations.appendChild(newLine)
 }
 
-async function fileExists(fileUrl) {
-    try {
-        const response = await fetch(fileUrl, { method: 'HEAD' });
-        return response.ok
-    } catch (error) {
-        return false
-    }
+function fileExists(url) {
+
+    var http = new XMLHttpRequest();
+    http.open('HEAD', url, false);
+    http.send();
+    return http.status!=404;
+    
 }
   /*
   

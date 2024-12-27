@@ -18,6 +18,8 @@ let allowedFiles = []
 
 let forbiddenFolders = []
 
+let fileName
+
 let scaleY
 
 let scaleX
@@ -120,7 +122,7 @@ function downloadPicture() {
 function download(url) {
     const a = document.createElement('a')
     a.href = url
-    a.download = 'mapped_file_tree.png'
+    a.download = `${fileName}.png`
     document.body.appendChild(a)
     a.click()
     document.body.removeChild(a)
@@ -192,9 +194,11 @@ function handleDrop(e) {
 
 function handleFiles(files) {
 
-    const filesArray = [...files];
+    const filesArray = [...files].map(n => n.webkitGetAsEntry());
 
-    filesArray.forEach(n => traverseFileTree(n.webkitGetAsEntry()));
+    fileName = filesArray.length == 1 ? filesArray[0].name : "mapped_file_tree"
+
+    filesArray.forEach(n => traverseFileTree(n));
 }
 
 async function traverseFileTree(item, path, depth, parent, first, last) {
